@@ -6,11 +6,13 @@ public class Movement : MonoBehaviour
 {
 
     Rigidbody rb;
+    AudioSource audioSource;
 
-    [SerializeField]
-    float mainThrustFactor = 1000f;
-    [SerializeField]
-    float rotateThrustFactor = 300f;
+    [SerializeField] float mainThrustFactor = 1000f;
+    [SerializeField] float rotateThrustFactor = 300f;
+    [SerializeField] AudioClip mainEngine;
+
+
 
     [SerializeField]
     ForceMode fmode;
@@ -19,6 +21,7 @@ public class Movement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -32,8 +35,14 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rb.AddRelativeForce(Time.deltaTime * mainThrustFactor * Vector3.up); 
-            Debug.Log("pressed thrust");
+            rb.AddRelativeForce(Time.deltaTime * mainThrustFactor * Vector3.up);
+            if (!audioSource.isPlaying)
+                audioSource.PlayOneShot(mainEngine);
+            // Debug.Log("pressed thrust");
+        }
+        else
+        {
+            audioSource.Pause();
         }
     }
 
