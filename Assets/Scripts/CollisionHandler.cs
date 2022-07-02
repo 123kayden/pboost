@@ -10,20 +10,37 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] float ReloadTime = 1;
     [SerializeField] AudioClip crashAudio;
     [SerializeField] AudioClip finishAudio;
+    [SerializeField] ParticleSystem crashParticle;
+    [SerializeField] ParticleSystem finishParticle;
 
     AudioSource audioSource;
 
 
-    bool crashed = false;
+    bool isTransitioning = false;
+    bool collisionsOn = true;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
     }
 
+    void Update()
+    {
+        RespondToDebugKeys();
+    }
+
+    void RespondToDebugKeys()
+    {
+        if (Input.GetKey(KeyCode.L))
+            LoadNextLevel();
+        else if (Input.GetKey(KeyCode.C))
+            collisionsOn = !collisionsOn;
+    }
 
     void OnCollisionEnter(Collision other)
     {
-        Debug.Log("collide");
+
+        if (!collisionsOn || isTransitioning ) { return; }
+
 
         switch (other.gameObject.tag)
         {
@@ -36,51 +53,50 @@ public class CollisionHandler : MonoBehaviour
                 break;
 
             default:
-            StartCrashSequence();
+                StartCrashSequence();
                 // Reload();
                 break;
         }
     }
 
 
-    private void StartCrashSequence(){
+    private void StartCrashSequence()
+    {
         // add particle and sound effect
-        if(!crashed)
-        {
-            audioSource.PlayOneShot(crashAudio);
-        }
-        crashed = false;
+
+        isTransitioning = true;
+        audioSource.Stop();
+
+        audioSource.PlayOneShot(crashAudio);
+        crashParticle.Play();
         this.gameObject.GetComponent<Movement>().enabled = false;
         Invoke("Reload", ReloadTime);
     }
 
-    private void StartFinishLevelSequence(){
+    private void StartFinishLevelSequence()
+    {
 
-        if(!crashed)
-        {
-            audioSource.PlayOneShot(finishAudio);
-        }
-        crashed = false;
-
+        isTransitioning = true;
+        audioSource.Stop();
+        audioSource.PlayOneShot(finishAudio);
+        finishParticle.Play();
 
         this.gameObject.GetComponent<Movement>().enabled = false;
         Invoke("LoadNextLevel", ReloadTime);
     }
 
-    private  void LoadNextLevel()
+    private void LoadNextLevel()
     {
         var nextScene = SceneManager.GetActiveScene().buildIndex + 1;
-        
+
         if (nextScene == SceneManager.sceneCountInBuildSettings)
             nextScene = 0;
 
         SceneManager.LoadScene(nextScene);
-        crashed = false;
     }
 
-    private  void Reload()
+    private void Reload()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        crashed = false;
     }
 }
