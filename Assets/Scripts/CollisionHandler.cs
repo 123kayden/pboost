@@ -75,7 +75,6 @@ public class CollisionHandler : MonoBehaviour
 
     private void StartFinishLevelSequence()
     {
-
         isTransitioning = true;
         audioSource.Stop();
         audioSource.PlayOneShot(finishAudio);
