@@ -675,7 +675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02223a57e1987e840a213174ef967030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementVector: {x: 10, y: 0, z: 0}
+  movementVector: {x: 0, y: 10, z: 0}
   period: 2
 --- !u!1001 &2130049423726174248
 PrefabInstance:
